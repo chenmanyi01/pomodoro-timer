@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>番茄钟</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dark">
+  <!-- Title bar -->
+  <div class="titlebar" id="titlebar">
+    <div class="titlebar-drag">
+      <span class="titlebar-icon">🍅</span>
+      <span class="titlebar-text">番茄钟</span>
+    </div>
+    <div class="titlebar-actions">
+      <button class="titlebar-btn" id="btnTheme" title="切换主题">🌙</button>
+      <button class="titlebar-btn" id="btnMinimize" title="最小化">─</button>
+      <button class="titlebar-btn" id="btnClose" title="关闭">✕</button>
+    </div>
+  </div>
+
+  <!-- Main container -->
+  <div class="container">
+    <!-- Timer section -->
+    <div class="timer-section">
+      <div class="timer-ring-container">
+        <svg class="timer-ring" viewBox="0 0 220 220">
+          <circle class="ring-bg" cx="110" cy="110" r="100" />
+          <circle class="ring-progress" id="ringProgress" cx="110" cy="110" r="100"
+            stroke-dasharray="628.32" stroke-dashoffset="0" />
+        </svg>
+        <div class="timer-display">
+          <div class="timer-time" id="timerDisplay">25:00</div>
+          <div class="timer-phase" id="timerPhase">工作中</div>
+          <div class="timer-pomodoros" id="timerPomodoros">第 0 个番茄</div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls">
+        <button class="ctrl-btn primary" id="btnStart">▶ 开始</button>
+        <button class="ctrl-btn" id="btnReset">⟳ 重置</button>
+        <button class="ctrl-btn" id="btnSkip">⏭ 跳过</button>
+      </div>
+
+      <!-- Progress dots -->
+      <div class="progress-dots" id="progressDots">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+      <div class="progress-label" id="progressLabel">今日完成: 0 个番茄</div>
+    </div>
+
+    <!-- Tab navigation -->
+    <div class="tabs">
+      <button class="tab active" data-tab="tasks">📋 任务</button>
+      <button class="tab" data-tab="stats">📊 统计</button>
+      <button class="tab" data-tab="settings">⚙️ 设置</button>
+    </div>
+
+    <!-- Tab content -->
+    <div class="tab-content">
+
+      <!-- Tasks tab -->
+      <div class="tab-panel active" id="panel-tasks">
+        <div class="task-input-row">
+          <input type="text" id="taskInput" placeholder="添加新任务..." />
+          <button id="btnAddTask" title="添加任务">＋</button>
+        </div>
+        <div class="task-list" id="taskList">
+          <div class="empty-state" id="emptyTasks">暂无任务，添加一个开始吧</div>
+        </div>
+        <div class="task-footer">
+          <span id="taskCount">0/0 已完成</span>
+          <button id="btnClearCompleted" class="link-btn">清除已完成</button>
+        </div>
+      </div>
+
+      <!-- Stats tab -->
+      <div class="tab-panel" id="panel-stats">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="statToday">0</div>
+            <div class="stat-label">今日番茄</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statWeek">0</div>
+            <div class="stat-label">本周番茄</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statTotal">0</div>
+            <div class="stat-label">总计番茄</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statFocus">0h 0m</div>
+            <div class="stat-label">今日专注</div>
+          </div>
+        </div>
+        <div class="chart-section">
+          <div class="chart-title">近 7 天专注时间</div>
+          <canvas id="statsChart" width="340" height="180"></canvas>
+        </div>
+      </div>
+
+      <!-- Settings tab -->
+      <div class="tab-panel" id="panel-settings">
+        <div class="settings-group">
+          <div class="setting-row">
+            <label>工作时间（分钟）</label>
+            <input type="number" id="settingWork" value="25" min="1" max="120" />
+          </div>
+          <div class="setting-row">
+            <label>短休息（分钟）</label>
+            <input type="number" id="settingShortBreak" value="5" min="1" max="60" />
+          </div>
+          <div class="setting-row">
+            <label>长休息（分钟）</label>
+            <input type="number" id="settingLongBreak" value="15" min="1" max="120" />
+          </div>
+          <div class="setting-row">
+            <label>长休息间隔（番茄数）</label>
+            <input type="number" id="settingLongInterval" value="4" min="2" max="10" />
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="setting-row toggle-row">
+            <label>桌面通知</label>
+            <label class="toggle">
+              <input type="checkbox" id="settingNotification" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-row toggle-row">
+            <label>声音提醒</label>
+            <label class="toggle">
+              <input type="checkbox" id="settingSound" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-row toggle-row">
+            <label>自动开始休息</label>
+            <label class="toggle">
+              <input type="checkbox" id="settingAutoBreak" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-row toggle-row">
+            <label>自动开始工作</label>
+            <label class="toggle">
+              <input type="checkbox" id="settingAutoWork" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-row toggle-row">
+            <label>白噪音</label>
+            <label class="toggle">
+              <input type="checkbox" id="settingWhiteNoise" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="setting-row">
+            <label>白噪音音量</label>
+            <input type="range" id="settingNoiseVolume" min="0" max="100" value="30" />
+          </div>
+        </div>
+
+        <button class="ctrl-btn primary" id="btnResetStats" style="width:100%;margin-top:8px;">🗑 重置所有数据</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- White noise audio context (hidden) -->
+  <script src="app.js"></script>
+</body>
+</html>
