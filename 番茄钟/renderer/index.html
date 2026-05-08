@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>番茄钟</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="dark">
+
+<!-- ====== 自定义标题栏 ====== -->
+<header class="titlebar">
+  <div class="titlebar-left">
+    <span class="titlebar-icon">🍅</span>
+    <span class="titlebar-text">番茄钟</span>
+  </div>
+  <div class="titlebar-right">
+    <button class="tb-btn" id="toggleTheme" title="切换主题">🌙</button>
+    <button class="tb-btn" id="btnMinimize" title="最小化">─</button>
+    <button class="tb-btn tb-close" id="btnClose" title="关闭">✕</button>
+  </div>
+</header>
+
+<!-- ====== 主内容 ====== -->
+<div class="container">
+
+  <!-- 计时器区域 -->
+  <section class="timer-section">
+    <div class="ring-wrapper">
+      <svg class="ring" viewBox="0 0 220 220">
+        <circle class="ring-bg" cx="110" cy="110" r="100"/>
+        <circle class="ring-progress" id="ringProgress" cx="110" cy="110" r="100"
+                stroke-dasharray="628.32" stroke-dashoffset="0"/>
+      </svg>
+      <div class="ring-center">
+        <div class="time-display" id="timerDisplay">25:00</div>
+        <div class="phase-label" id="phaseLabel">工作中</div>
+        <div class="pomo-count" id="pomoCount">第 0 个番茄</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-primary" id="btnStart">▶ 开始</button>
+      <button class="btn" id="btnReset">⟳ 重置</button>
+      <button class="btn" id="btnSkip">⏭ 跳过</button>
+    </div>
+
+    <div class="dot-row" id="dotRow">
+      <i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i>
+      <i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i>
+    </div>
+    <div class="dot-label" id="dotLabel">今日完成 0 个番茄</div>
+  </section>
+
+  <!-- ====== 标签栏 ====== -->
+  <nav class="tabs">
+    <button class="tab active" data-panel="tasks">📋 任务</button>
+    <button class="tab" data-panel="stats">📊 统计</button>
+    <button class="tab" data-panel="settings">⚙️ 设置</button>
+  </nav>
+
+  <!-- ====== 面板容器 ====== -->
+  <div class="panels">
+
+    <!-- 任务面板 -->
+    <div class="panel active" id="panel-tasks">
+      <div class="task-input-row">
+        <input type="text" id="taskInput" placeholder="添加新任务…">
+        <button class="btn-add" id="btnAddTask">＋</button>
+      </div>
+      <div class="task-list" id="taskList">
+        <div class="empty-state">暂无任务，添加一个开始吧</div>
+      </div>
+      <footer class="task-footer">
+        <span id="taskProgress">0/0 已完成</span>
+        <button class="link" id="clearDone">清除已完成</button>
+      </footer>
+    </div>
+
+    <!-- 统计面板 -->
+    <div class="panel" id="panel-stats">
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-num" id="statToday">0</div><div class="stat-lbl">今日番茄</div></div>
+        <div class="stat-card"><div class="stat-num" id="statWeek">0</div><div class="stat-lbl">本周番茄</div></div>
+        <div class="stat-card"><div class="stat-num" id="statTotal">0</div><div class="stat-lbl">总计番茄</div></div>
+        <div class="stat-card"><div class="stat-num" id="statFocus">0h 0m</div><div class="stat-lbl">今日专注</div></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title">近 7 天专注趋势</div>
+        <canvas id="chart" width="340" height="160"></canvas>
+      </div>
+    </div>
+
+    <!-- 设置面板 -->
+    <div class="panel" id="panel-settings">
+      <div class="setting-group">
+        <div class="setting"><span>工作时长 (分钟)</span><input type="number" id="sWork" value="25" min="1" max="120"></div>
+        <div class="setting"><span>短休息 (分钟)</span><input type="number" id="sShort" value="5" min="1" max="60"></div>
+        <div class="setting"><span>长休息 (分钟)</span><input type="number" id="sLong" value="15" min="1" max="120"></div>
+        <div class="setting"><span>长休息间隔 (番茄数)</span><input type="number" id="sInterval" value="4" min="2" max="10"></div>
+      </div>
+      <div class="setting-group">
+        <div class="setting"><span>桌面通知</span><label class="toggle"><input type="checkbox" id="sNotify" checked><span class="slider"></span></label></div>
+        <div class="setting"><span>声音提醒</span><label class="toggle"><input type="checkbox" id="sSound" checked><span class="slider"></span></label></div>
+        <div class="setting"><span>自动开始休息</span><label class="toggle"><input type="checkbox" id="sAutoBreak" checked><span class="slider"></span></label></div>
+        <div class="setting"><span>自动开始工作</span><label class="toggle"><input type="checkbox" id="sAutoWork"><span class="slider"></span></label></div>
+        <div class="setting"><span>白噪音</span><label class="toggle"><input type="checkbox" id="sNoise"><span class="slider"></span></label></div>
+        <div class="setting"><span>白噪音音量</span><input type="range" id="sNoiseVol" min="0" max="100" value="30"></div>
+      </div>
+      <button class="btn btn-danger" id="resetAll">🗑 重置所有数据</button>
+    </div>
+
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
